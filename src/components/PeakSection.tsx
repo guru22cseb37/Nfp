@@ -55,9 +55,10 @@ export default function PeakSection() {
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
           playsInline
-          preload="metadata"
+          muted
+          preload="auto"
         >
-          <source src="/peak_video.mp4" type="video/mp4" />
+          <source src="/peak_video.mp4?v=2" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
 

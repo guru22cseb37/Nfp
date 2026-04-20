@@ -2,11 +2,12 @@
 
 import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Play, Pause, FastForward, Rewind, PlayCircle, ChevronLeft, Maximize } from 'lucide-react';
+import { Play, Pause, FastForward, Rewind, PlayCircle, ChevronLeft, Maximize, Volume2, VolumeX } from 'lucide-react';
 import Link from 'next/link';
 
 export default function PeakPage() {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const togglePlay = () => {
@@ -14,6 +15,13 @@ export default function PeakPage() {
       if (isPlaying) videoRef.current.pause();
       else videoRef.current.play();
       setIsPlaying(!isPlaying);
+    }
+  };
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
     }
   };
 
@@ -48,9 +56,10 @@ export default function PeakPage() {
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
           playsInline
+          muted
           preload="auto"
         >
-          <source src="/peak_video.mp4" type="video/mp4" />
+          <source src="/peak_video.mp4?v=2" type="video/mp4" />
         </video>
 
         {/* Controls Overlay */}
@@ -69,6 +78,9 @@ export default function PeakPage() {
             </button>
             <button onClick={toggleFullScreen} style={{ position: 'absolute', right: 20, background: 'none', border: 'none', color: '#fff' }}>
               <Maximize size={24} />
+            </button>
+            <button onClick={toggleMute} style={{ position: 'absolute', left: 20, background: 'none', border: 'none', color: '#fff' }}>
+              {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
             </button>
           </div>
         </div>
