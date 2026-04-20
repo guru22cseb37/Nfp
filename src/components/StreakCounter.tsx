@@ -35,13 +35,19 @@ const relapseMessages = [
 ];
 
 export default function StreakCounter({ profile, onUpdate }: Props) {
-  const [hasCheckedIn, setHasCheckedIn] = useState(false);
-  const [todaySuccess, setTodaySuccess] = useState<boolean | null>(null);
-  const [showResetConfirm, setShowResetConfirm] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
-  const [messageType, setMessageType] = useState<'success' | 'reset' | ''>('');
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [step, setStep] = useState(1);
+  const [mood, setMood] = useState('');
+  const [trigger, setTrigger] = useState('');
+
+  const MOODS = [
+    { label: 'Happy', emoji: '😊' },
+    { label: 'Neutral', emoji: '😐' },
+    { label: 'Sad', emoji: '😔' },
+    { label: 'Angry', emoji: '😠' },
+    { label: 'Anxious', emoji: '😰' },
+  ];
+
+  const TRIGGERS = ['Boredom', 'Stress', 'Loneliness', 'Fatigue', 'Social Media', 'Other'];
 
   const streak = profile.current_streak;
   const longest = profile.longest_streak;
@@ -102,6 +108,8 @@ export default function StreakCounter({ profile, onUpdate }: Props) {
       user_id: profile.id,
       checkin_date: today,
       success,
+      mood: mood || null,
+      trigger: trigger || null,
     });
 
     // Update streak
@@ -132,137 +140,118 @@ export default function StreakCounter({ profile, onUpdate }: Props) {
     }
 
     onUpdate();
+    setStep(1);
     setTimeout(() => { setMessage(''); setMessageType(''); }, 8000);
   };
 
-  const flameScale = Math.min(1 + streak * 0.01, 1.5);
-
   return (
-    <div style={{ textAlign: 'center' }}>
-      {/* Streak Number */}
-      <motion.div
-        key={streak}
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: 'spring', damping: 15, stiffness: 200 }}
-        style={{ marginBottom: 8 }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, marginBottom: 4 }}>
-          <motion.div
-            animate={{ scale: [1, 1.1, 1], rotate: [-3, 3, -3] }}
-            transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
-          >
-            <Flame size={40} color="#f0a500" fill="#f0a500" style={{ filter: 'drop-shadow(0 0 16px rgba(240,165,0,0.6))' }} />
-          </motion.div>
-          <span className="streak-number">{streak}</span>
-          <motion.div
-            animate={{ scale: [1, 1.1, 1], rotate: [3, -3, 3] }}
-            transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut', delay: 0.5 }}
-          >
-            <Flame size={40} color="#f0a500" fill="#f0a500" style={{ filter: 'drop-shadow(0 0 16px rgba(240,165,0,0.6))' }} />
-          </motion.div>
-        </div>
-        <p style={{ fontSize: 16, color: 'var(--text-secondary)', fontWeight: 500, letterSpacing: '0.5px', textTransform: 'uppercase' }}>
-          {streak === 1 ? 'Day Clean' : 'Days Clean'}
-        </p>
-      </motion.div>
+    <div className="card" style={{ padding: '40px 32px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 4, background: 'rgba(255,255,255,0.05)' }}>
+        <motion.div animate={{ width: hasCheckedIn ? '100%' : `${(step / 3) * 100}%` }} style={{ height: '100%', background: 'var(--sage-400)' }} />
+      </div>
 
-      {/* Longest streak */}
-      {longest > 0 && (
-        <div style={{ marginBottom: 28, display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 14px', borderRadius: 99, background: 'rgba(240,165,0,0.1)', border: '1px solid rgba(240,165,0,0.25)' }}>
-          <span style={{ fontSize: 13, color: '#f0a500', fontWeight: 600 }}>🏆 Best: {longest} days</span>
-        </div>
-      )}
+      <AnimatePresence mode="wait">
+        {!hasCheckedIn ? (
+          <motion.div key="checkin-flow" style={{ width: '100%' }}>
+            {step === 1 && (
+              <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, marginBottom: 8 }}>
+                  <Flame size={40} color="#f0a500" fill="#f0a500" />
+                  <span className="streak-number">{streak}</span>
+                </div>
+                <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginBottom: 20 }}>DAY CLEAN</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  <button onClick={() => setStep(2)} className="btn-primary" style={{ width: '100%' }}>
+                    Start Daily Check-in
+                  </button>
+                </div>
+              </motion.div>
+            )}
 
-      {/* Reset confirm dialog */}
+            {step === 2 && (
+              <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+                <h3 style={{ fontSize: 20, fontWeight: 800, marginBottom: 24 }}>How are you feeling?</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 10, marginBottom: 32 }}>
+                  {MOODS.map((m) => (
+                    <button key={m.label} onClick={() => setMood(m.label)} style={{ 
+                      background: mood === m.label ? 'rgba(74,124,89,0.2)' : 'rgba(255,255,255,0.05)',
+                      border: `1.5px solid ${mood === m.label ? 'var(--sage-400)' : 'transparent'}`,
+                      borderRadius: 16, padding: '12px 0', cursor: 'pointer', transition: 'all 0.2s', color: 'inherit'
+                    }}>
+                      <div style={{ fontSize: 28 }}>{m.emoji}</div>
+                      <div style={{ fontSize: 10, marginTop: 4, fontWeight: 600 }}>{m.label}</div>
+                    </button>
+                  ))}
+                </div>
+                <button onClick={() => setStep(3)} className="btn-primary" style={{ width: '100%' }} disabled={!mood}>Next</button>
+              </motion.div>
+            )}
+
+            {step === 3 && (
+              <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+                <h3 style={{ fontSize: 20, fontWeight: 800, marginBottom: 12 }}>Did you stay clean?</h3>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  <button onClick={() => handleCheckin(true)} className="btn-primary" style={{ padding: 18 }}>
+                    Yes, I stayed strong! 🌿
+                  </button>
+                  
+                  <div style={{ marginTop: 8 }}>
+                    <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 10 }}>Any specific trigger?</p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center', marginBottom: 16 }}>
+                      {TRIGGERS.map(t => (
+                        <button key={t} onClick={() => setTrigger(t)} style={{ 
+                          padding: '6px 14px', borderRadius: 20, fontSize: 12, 
+                          background: trigger === t ? 'rgba(107,163,190,0.2)' : 'transparent',
+                          border: `1px solid ${trigger === t ? 'var(--sky-calm)' : 'var(--border)'}`,
+                          color: trigger === t ? 'var(--sky-calm)' : 'var(--text-muted)',
+                          cursor: 'pointer'
+                        }}>
+                          {t}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <button onClick={() => handleCheckin(false)} className="btn-ghost" style={{ color: '#e74c3c' }}>
+                    I relapsed
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </motion.div>
+        ) : (
+          <motion.div key="done-step" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(74,124,89,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                <CheckCircle2 size={32} color="var(--sage-400)" />
+              </div>
+              <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 8 }}>Day {streak} Logged ✓</h3>
+              <p style={{ fontSize: 14, color: 'var(--text-muted)' }}>{message || 'Stay strong. You got this.'}</p>
+            </div>
+            <div className="badge badge-amber">🏆 Best: {longest} days</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Reset Confirmation Overlay */}
       <AnimatePresence>
         {showResetConfirm && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            style={{ marginBottom: 20, padding: '16px 20px', borderRadius: 16, background: 'rgba(192,57,43,0.1)', border: '1px solid rgba(192,57,43,0.25)', textAlign: 'left' }}
-          >
-            <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginBottom: 12, lineHeight: 1.5 }}>
-              It takes courage to be honest. Are you sure you want to log today as a relapse? Remember — this is for your healing, and honesty is strength.
-            </p>
-            <div style={{ display: 'flex', gap: 10 }}>
-              <button onClick={() => handleCheckin(false)} className="btn-danger" style={{ padding: '10px 18px', fontSize: 13 }}>
-                Yes, reset my streak
-              </button>
-              <button onClick={() => setShowResetConfirm(false)} className="btn-ghost" style={{ padding: '10px 18px', fontSize: 13 }}>
-                Cancel
-              </button>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ position: 'absolute', inset: 0, background: 'rgba(7, 11, 20, 0.95)', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+            <div>
+              <XCircle size={48} color="#e74c3c" style={{ marginBottom: 16 }} />
+              <h3 style={{ fontSize: 20, fontWeight: 800, marginBottom: 12 }}>It's okay to stumble</h3>
+              <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginBottom: 24, lineHeight: 1.5 }}>
+                Resetting your streak is an act of honesty and courage. It's the first step in starting again stronger.
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <button onClick={() => handleCheckin(false)} className="btn-danger" style={{ width: '100%' }}>Yes, Reset Streak</button>
+                <button onClick={() => setShowResetConfirm(false)} className="btn-ghost" style={{ width: '100%' }}>Cancel</button>
+              </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Feedback message */}
-      <AnimatePresence>
-        {message && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 10 }}
-            style={{
-              marginBottom: 24, padding: '16px 20px', borderRadius: 16,
-              background: messageType === 'success' ? 'rgba(74,124,89,0.15)' : 'rgba(107,163,190,0.12)',
-              border: `1px solid ${messageType === 'success' ? 'rgba(74,124,89,0.3)' : 'rgba(107,163,190,0.25)'}`,
-              color: messageType === 'success' ? 'var(--sage-200)' : 'var(--sky-calm)',
-              fontSize: 14, lineHeight: 1.6, textAlign: 'left',
-            }}
-          >
-            {message}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Check-in buttons */}
-      {!hasCheckedIn ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'center' }}>
-          <p style={{ fontSize: 14, color: 'var(--text-muted)', marginBottom: 4 }}>How was your day?</p>
-          <div style={{ display: 'flex', gap: 12 }}>
-            <button
-              id="checkin-success-btn"
-              onClick={() => handleCheckin(true)}
-              disabled={loading}
-              className="btn-primary"
-              style={{ gap: 8, padding: '14px 28px' }}
-            >
-              <CheckCircle2 size={18} />
-              I stayed clean ✨
-            </button>
-            <button
-              id="checkin-relapse-btn"
-              onClick={() => handleCheckin(false)}
-              disabled={loading}
-              className="btn-ghost"
-              style={{ gap: 8, padding: '14px 20px', borderColor: 'rgba(192,57,43,0.3)', color: '#e07070' }}
-            >
-              <XCircle size={18} />
-              I relapsed
-            </button>
-          </div>
-        </div>
-      ) : (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-          <div
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: 8,
-              padding: '12px 20px', borderRadius: 14,
-              background: todaySuccess ? 'rgba(74,124,89,0.12)' : 'rgba(107,163,190,0.1)',
-              border: `1px solid ${todaySuccess ? 'rgba(74,124,89,0.3)' : 'rgba(107,163,190,0.2)'}`,
-              color: todaySuccess ? 'var(--sage-300)' : 'var(--sky-calm)',
-              fontSize: 14, fontWeight: 500,
-            }}
-          >
-            {todaySuccess ? <CheckCircle2 size={18} /> : <RefreshCcw size={18} />}
-            {todaySuccess ? "Today's check-in logged ✓" : "Today logged — keep going 💙"}
-          </div>
-          <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 8 }}>Come back tomorrow for your next check-in</p>
-        </motion.div>
-      )}
     </div>
   );
 }
