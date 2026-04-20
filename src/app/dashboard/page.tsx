@@ -5,9 +5,13 @@ import { motion } from 'framer-motion';
 import { TrendingUp, Award, Calendar, MessageCircle } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import StreakCounter from '@/components/StreakCounter';
-import ProgressChart from '@/components/ProgressChart';
 import SosButton from '@/components/SosButton';
 import BadgeGallery from '@/components/BadgeGallery';
+import ProgressChart from '@/components/ProgressChart';
+import ImpactCalculator from '@/components/ImpactCalculator';
+import WhyFocusWall from '@/components/WhyFocusWall';
+import TriggerAnalytics from '@/components/TriggerAnalytics';
+import DailyChallenges from '@/components/DailyChallenges';
 import { useAppStore } from '@/lib/store';
 import type { Profile, DailyCheckin } from '@/lib/types';
 
@@ -51,11 +55,16 @@ export default function DashboardPage() {
       {/* Emergency SOS Button */}
       <SosButton />
 
+      {/* Why Focus Wall */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+        <WhyFocusWall initialWhy={profile.why_statement || 'To be the best version of myself.'} userId={profile.id} />
+      </motion.div>
+
       {/* Streak Card */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
         className="card"
         style={{
           padding: '36px 24px 28px',
@@ -69,8 +78,18 @@ export default function DashboardPage() {
         <StreakCounter profile={profile} onUpdate={fetchData} />
       </motion.div>
 
+      {/* Impact Calculator */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.15 }}>
+        <ImpactCalculator streak={profile.current_streak} />
+      </motion.div>
+
+      {/* Daily Challenges */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
+        <DailyChallenges />
+      </motion.div>
+
       {/* Badge Gallery */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.25 }}>
         <BadgeGallery currentStreak={profile.current_streak} />
       </motion.div>
 
@@ -78,7 +97,7 @@ export default function DashboardPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.15 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
         onClick={openChat}
         className="card"
         style={{
@@ -106,7 +125,7 @@ export default function DashboardPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
+        transition={{ duration: 0.5, delay: 0.35 }}
         className="card"
         style={{ padding: '20px 24px' }}
       >
@@ -117,16 +136,22 @@ export default function DashboardPage() {
         <ProgressChart checkins={checkins} />
       </motion.div>
 
+      {/* Trigger Analytics */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
+        <TriggerAnalytics checkins={checkins} />
+      </motion.div>
+
       {/* Daily affirmation */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.3 }}
+        transition={{ duration: 0.5, delay: 0.45 }}
         style={{
           padding: '20px 24px', borderRadius: 20,
           background: 'linear-gradient(135deg, rgba(107,163,190,0.1), rgba(74,124,89,0.08))',
           border: '1px solid rgba(107,163,190,0.2)',
           textAlign: 'center',
+          marginBottom: 40
         }}
       >
         <p style={{ fontSize: 13, color: 'var(--sky-calm)', marginBottom: 8, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Daily Affirmation</p>
