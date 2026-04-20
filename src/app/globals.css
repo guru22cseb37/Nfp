@@ -345,7 +345,7 @@ body {
 .calendar-day.missed { background: rgba(192,57,43,0.3); color: var(--rose-soft); }
 .calendar-day.today { outline: 2px solid var(--sage-400); }
 .calendar-day.future { background: var(--border); color: var(--text-muted); opacity: 0.4; }
-.calendar-day.empty { background: transparent; }
+.calendar-day.empty { background: var(--border); opacity: 0.2; }
 
 /* ============== GLASSMORPHISM ============== */
 .glass {

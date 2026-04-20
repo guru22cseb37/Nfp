@@ -114,15 +114,20 @@ export default function ProgressChart({ checkins }: Props) {
         <svg width="100%" height="80" viewBox={`0 0 ${weeks.length * 44} 80`} preserveAspectRatio="xMidYMid meet">
           {weeks.map((week, wi) => {
             const clean = week.filter((d) => checkinMap[d] === true).length;
-            const barH = Math.max((clean / 7) * 60, 4);
+            const barH = Math.max((clean / 7) * 60, 6);
             const x = wi * 44 + 6;
+            const isCurrentWeek = week.includes(today);
+            
             return (
               <g key={wi}>
+                {/* Background track for the bar */}
+                <rect x={x} y={10} width={32} height={60} rx={6} fill="var(--border)" opacity={0.1} />
+                
                 <rect x={x} y={70 - barH} width={32} height={barH} rx={6}
-                  fill={clean >= 5 ? '#4a7c59' : clean >= 3 ? '#f0a500' : clean > 0 ? '#6ba3be' : 'rgba(255,255,255,0.05)'}
-                  opacity={0.85}
+                  fill={clean >= 5 ? 'var(--sage-500)' : clean >= 3 ? 'var(--amber-glow)' : clean > 0 ? 'var(--sky-calm)' : 'var(--text-muted)'}
+                  opacity={isCurrentWeek ? 1 : 0.6}
                 />
-                <text x={x + 16} y={78} textAnchor="middle" fill="rgba(255,255,255,0.3)" fontSize={9}>
+                <text x={x + 16} y={78} textAnchor="middle" fill="var(--text-muted)" fontSize={9} fontWeight={isCurrentWeek ? 700 : 400}>
                   W{wi + 1}
                 </text>
               </g>
