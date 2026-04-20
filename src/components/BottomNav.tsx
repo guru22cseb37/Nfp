@@ -2,12 +2,13 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Flame, BookOpen, MessageCircle, User, LayoutDashboard } from 'lucide-react';
+import { Flame, BookOpen, MessageCircle, User, LayoutDashboard, PlayCircle } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { createClient } from '@/lib/supabase/client';
 
 const navItems = [
   { href: '/dashboard', label: 'Home', icon: LayoutDashboard },
+  { href: '/dashboard/peak', label: 'Peak', icon: PlayCircle },
   { href: '/dashboard/education', label: 'Learn', icon: BookOpen },
   { href: '/dashboard/profile', label: 'Profile', icon: User },
 ];
@@ -51,12 +52,6 @@ export default function BottomNav() {
           <span>{label}</span>
         </Link>
       ))}
-
-      {/* Streak indicator — rightmost */}
-      <Link href="/dashboard" className={`nav-item ${pathname === '/dashboard' ? 'active' : ''}`}>
-        <Flame size={22} />
-        <span>Streak</span>
-      </Link>
     </nav>
   );
 }
