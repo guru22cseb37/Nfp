@@ -14,6 +14,7 @@ import TriggerAnalytics from '@/components/TriggerAnalytics';
 import DailyChallenges from '@/components/DailyChallenges';
 import BrotherhoodPulse from '@/components/BrotherhoodPulse';
 import AccountabilityPartner from '@/components/AccountabilityPartner';
+import PeakSection from '@/components/PeakSection';
 import { useAppStore } from '@/lib/store';
 import type { Profile, DailyCheckin } from '@/lib/types';
 
@@ -64,6 +65,11 @@ export default function DashboardPage() {
 
       {/* Emergency SOS Button */}
       <SosButton />
+
+      {/* Peak Motivation Video */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+        <PeakSection />
+      </motion.div>
 
       {/* Risk Alert (Conditional) */}
       {riskLevel !== 'LOW' && (
