@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Play, Pause, FastForward, Rewind, PlayCircle, ChevronLeft } from 'lucide-react';
+import { Play, Pause, FastForward, Rewind, PlayCircle, ChevronLeft, Maximize } from 'lucide-react';
 import Link from 'next/link';
 
 export default function PeakPage() {
@@ -19,6 +19,16 @@ export default function PeakPage() {
 
   const skip = (seconds: number) => {
     if (videoRef.current) videoRef.current.currentTime += seconds;
+  };
+
+  const toggleFullScreen = () => {
+    if (videoRef.current) {
+      if (videoRef.current.requestFullscreen) {
+        videoRef.current.requestFullscreen();
+      } else if ((videoRef.current as any).webkitRequestFullscreen) {
+        (videoRef.current as any).webkitRequestFullscreen();
+      }
+    }
   };
 
   return (
@@ -54,6 +64,9 @@ export default function PeakPage() {
             </button>
             <button onClick={() => skip(10)} style={{ background: 'none', border: 'none', color: '#fff' }}>
               <FastForward size={32} />
+            </button>
+            <button onClick={toggleFullScreen} style={{ position: 'absolute', right: 20, background: 'none', border: 'none', color: '#fff' }}>
+              <Maximize size={24} />
             </button>
           </div>
         </div>

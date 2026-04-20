@@ -26,6 +26,16 @@ export default function PeakSection() {
     }
   };
 
+  const toggleFullScreen = () => {
+    if (videoRef.current) {
+      if (videoRef.current.requestFullscreen) {
+        videoRef.current.requestFullscreen();
+      } else if ((videoRef.current as any).webkitRequestFullscreen) {
+        (videoRef.current as any).webkitRequestFullscreen();
+      }
+    }
+  };
+
   return (
     <div className="card" style={{ padding: 24, marginBottom: 24, background: 'linear-gradient(135deg, var(--bg-card), rgba(74,124,89,0.1))', border: '1.5px solid var(--sage-400)' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
@@ -92,6 +102,9 @@ export default function PeakSection() {
 
             <button onClick={() => skip(10)} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer' }}>
               <FastForward size={24} />
+            </button>
+            <button onClick={toggleFullScreen} style={{ position: 'absolute', right: 0, background: 'none', border: 'none', color: '#fff', cursor: 'pointer' }}>
+              <Maximize size={18} />
             </button>
           </div>
         </motion.div>
