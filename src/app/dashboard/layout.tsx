@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import BottomNav from '@/components/BottomNav';
 import TopBar from '@/components/TopBar';
 import AiChatModal from '@/components/AiChatModal';
+import PageTransition from '@/components/PageTransition';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -30,7 +31,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     <div style={{ minHeight: '100dvh', background: 'transparent' }}>
       <TopBar email={user.email} />
       <main className="main-content" style={{ maxWidth: 680, margin: '0 auto', padding: '20px 16px 100px' }}>
-        {children}
+        <PageTransition>{children}</PageTransition>
       </main>
       <BottomNav />
       <AiChatModal />

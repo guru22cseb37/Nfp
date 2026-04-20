@@ -12,6 +12,8 @@ import ImpactCalculator from '@/components/ImpactCalculator';
 import WhyFocusWall from '@/components/WhyFocusWall';
 import TriggerAnalytics from '@/components/TriggerAnalytics';
 import DailyChallenges from '@/components/DailyChallenges';
+import BrotherhoodPulse from '@/components/BrotherhoodPulse';
+import AccountabilityPartner from '@/components/AccountabilityPartner';
 import { useAppStore } from '@/lib/store';
 import type { Profile, DailyCheckin } from '@/lib/types';
 
@@ -50,10 +52,31 @@ export default function DashboardPage() {
 
   if (!profile) return null;
 
+  // Simple Risk Score logic
+  const recentCheckins = checkins.slice(0, 3);
+  const badMoods = recentCheckins.filter(c => c.mood === 'Sad' || c.mood === 'Anxious' || c.mood === 'Angry').length;
+  const riskLevel = badMoods >= 2 ? 'HIGH' : badMoods === 1 ? 'MEDIUM' : 'LOW';
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      {/* Brotherhood Pulse */}
+      <BrotherhoodPulse />
+
       {/* Emergency SOS Button */}
       <SosButton />
+
+      {/* Risk Alert (Conditional) */}
+      {riskLevel !== 'LOW' && (
+        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="card" style={{ padding: '16px 20px', border: `1.5px solid ${riskLevel === 'HIGH' ? '#e74c3c' : '#f0a500'}`, background: riskLevel === 'HIGH' ? 'rgba(231,76,60,0.1)' : 'rgba(240,165,0,0.1)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ width: 10, height: 10, borderRadius: '50%', background: riskLevel === 'HIGH' ? '#e74c3c' : '#f0a500', boxShadow: `0 0 10px ${riskLevel === 'HIGH' ? '#e74c3c' : '#f0a500'}` }} />
+            <div style={{ flex: 1 }}>
+              <span style={{ fontSize: 13, fontWeight: 800, color: riskLevel === 'HIGH' ? '#e74c3c' : '#f0a500' }}>RELAPSE RISK: {riskLevel}</span>
+              <p style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>You've been feeling {recentCheckins[0]?.mood?.toLowerCase()} lately. Stay vigilant.</p>
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       {/* Why Focus Wall */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
@@ -139,6 +162,11 @@ export default function DashboardPage() {
       {/* Trigger Analytics */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
         <TriggerAnalytics checkins={checkins} />
+      </motion.div>
+
+      {/* Accountability Partner */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.45 }}>
+        <AccountabilityPartner userId={profile.id} />
       </motion.div>
 
       {/* Daily affirmation */}
