@@ -78,7 +78,7 @@ body {
 }
 
 .light body {
-  background-image: linear-gradient(to bottom, rgba(245, 240, 235, 0.85), rgba(245, 240, 235, 0.95)), url('/background.png');
+  background-image: linear-gradient(to bottom, rgba(245, 240, 235, 0.4), rgba(245, 240, 235, 0.7)), url('/background.png');
 }
 
 /* Scrollbar */

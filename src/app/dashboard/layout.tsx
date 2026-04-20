@@ -27,7 +27,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   }
 
   return (
-    <div style={{ minHeight: '100dvh', background: 'var(--bg-primary)' }}>
+    <div style={{ minHeight: '100dvh', background: 'transparent' }}>
       <TopBar email={user.email} />
       <main className="main-content" style={{ maxWidth: 680, margin: '0 auto', padding: '20px 16px 100px' }}>
         {children}
