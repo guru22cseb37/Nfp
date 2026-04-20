@@ -40,7 +40,7 @@ export default function LiveTimer({ lastRelapseAt }: Props) {
         key={value}
         initial={{ y: 5, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        style={{ fontSize: 24, fontWeight: 800, color: 'var(--text-primary)', tabularNums: true }}
+        style={{ fontSize: 24, fontWeight: 800, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums' }}
       >
         {String(value).padStart(2, '0')}
       </motion.div>
