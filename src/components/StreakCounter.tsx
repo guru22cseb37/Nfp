@@ -38,6 +38,12 @@ export default function StreakCounter({ profile, onUpdate }: Props) {
   const [step, setStep] = useState(1);
   const [mood, setMood] = useState('');
   const [trigger, setTrigger] = useState('');
+  const [hasCheckedIn, setHasCheckedIn] = useState(false);
+  const [todaySuccess, setTodaySuccess] = useState<boolean | null>(null);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState<'success' | 'reset' | ''>('');
 
   const MOODS = [
     { label: 'Happy', emoji: '😊' },
