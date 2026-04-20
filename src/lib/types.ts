@@ -11,6 +11,7 @@ export interface Profile {
   email: string | null;
   current_streak: number;
   longest_streak: number;
+  why_statement: string | null;
   created_at: string;
 }
 
@@ -19,6 +20,8 @@ export interface DailyCheckin {
   user_id: string;
   checkin_date: string;
   success: boolean;
+  mood: string | null;
+  trigger: string | null;
   note: string | null;
   created_at: string;
 }
