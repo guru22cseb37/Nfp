@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Flame, CheckCircle2, XCircle, RefreshCcw } from 'lucide-react';
+import { Flame, CheckCircle2, XCircle, RefreshCcw, Timer } from 'lucide-react';
+import LiveTimer from './LiveTimer';
 import confetti from 'canvas-confetti';
 import { createClient } from '@/lib/supabase/client';
 import type { Profile } from '@/lib/types';
@@ -121,10 +122,19 @@ export default function StreakCounter({ profile, onUpdate }: Props) {
     // Update streak
     let newStreak = success ? streak + 1 : 0;
     let newLongest = Math.max(longest, newStreak);
+    
+    const updatePayload: any = { 
+      current_streak: newStreak, 
+      longest_streak: newLongest 
+    };
+    
+    if (!success) {
+      updatePayload.last_relapse_at = new Date().toISOString();
+    }
 
     await supabase
       .from('profiles')
-      .update({ current_streak: newStreak, longest_streak: newLongest })
+      .update(updatePayload)
       .eq('id', profile.id);
 
     setHasCheckedIn(true);
@@ -171,6 +181,8 @@ export default function StreakCounter({ profile, onUpdate }: Props) {
                     Start Daily Check-in
                   </button>
                 </div>
+                
+                <LiveTimer lastRelapseAt={profile.last_relapse_at} />
               </motion.div>
             )}
 
@@ -236,6 +248,10 @@ export default function StreakCounter({ profile, onUpdate }: Props) {
               <p style={{ fontSize: 14, color: 'var(--text-muted)' }}>{message || 'Stay strong. You got this.'}</p>
             </div>
             <div className="badge badge-amber">🏆 Best: {longest} days</div>
+            
+            <div style={{ marginTop: 12 }}>
+              <LiveTimer lastRelapseAt={profile.last_relapse_at} />
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

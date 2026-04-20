@@ -12,6 +12,7 @@ export interface Profile {
   current_streak: number;
   longest_streak: number;
   why_statement: string | null;
+  last_relapse_at: string | null;
   created_at: string;
 }
 
