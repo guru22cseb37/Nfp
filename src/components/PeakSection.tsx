@@ -57,8 +57,9 @@ export default function PeakSection() {
           playsInline
           muted
           preload="auto"
+          poster="/peak_poster.png"
         >
-          <source src="/peak_video.mp4?v=2" type="video/mp4" />
+          <source src="/warrior_motivation.mp4?v=3" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
 
@@ -115,8 +116,13 @@ export default function PeakSection() {
         </motion.div>
       </div>
 
-      <div style={{ marginTop: 16, fontSize: 13, color: 'var(--text-secondary)', textAlign: 'center', fontStyle: 'italic' }}>
-        "When you feel like quitting, remember why you started."
+      <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+        <div style={{ fontSize: 13, color: 'var(--text-secondary)', textAlign: 'center', fontStyle: 'italic' }}>
+          "When you feel like quitting, remember why you started."
+        </div>
+        <a href="/warrior_motivation.mp4" download className="btn-secondary" style={{ fontSize: 11, padding: '4px 12px', opacity: 0.6 }}>
+          Plan B: Download Video
+        </a>
       </div>
     </div>
   );

@@ -58,8 +58,9 @@ export default function PeakPage() {
           playsInline
           muted
           preload="auto"
+          poster="/peak_poster.png"
         >
-          <source src="/peak_video.mp4?v=2" type="video/mp4" />
+          <source src="/warrior_motivation.mp4?v=3" type="video/mp4" />
         </video>
 
         {/* Controls Overlay */}
@@ -86,10 +87,13 @@ export default function PeakPage() {
         </div>
       </div>
 
-      <div style={{ marginTop: 24, padding: 20, textAlign: 'center' }}>
+      <div style={{ marginTop: 24, padding: 20, textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 16 }}>
         <p style={{ fontSize: 16, color: 'var(--text-primary)', lineHeight: 1.6, fontStyle: 'italic' }}>
           &ldquo;Success is not final, failure is not fatal: it is the courage to continue that counts.&rdquo;
         </p>
+        <a href="/warrior_motivation.mp4" download className="btn-secondary" style={{ alignSelf: 'center', fontSize: 11, opacity: 0.6 }}>
+          Plan B: Download Video
+        </a>
       </div>
     </div>
   );
