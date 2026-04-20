@@ -50,12 +50,16 @@ export default function PeakSection() {
       >
         <video
           ref={videoRef}
-          src="/peak_video.mp4"
           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           onClick={togglePlay}
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
-        />
+          playsInline
+          preload="metadata"
+        >
+          <source src="/peak_video.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
 
         {/* Custom Overlay Controls */}
         <motion.div

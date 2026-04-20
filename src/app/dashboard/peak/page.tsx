@@ -43,13 +43,15 @@ export default function PeakPage() {
       <div className="card" style={{ flex: 1, padding: 0, overflow: 'hidden', background: '#000', position: 'relative', borderRadius: 24 }}>
         <video
           ref={videoRef}
-          src="/peak_video.mp4"
           style={{ width: '100%', height: '100%', objectFit: 'contain' }}
           onClick={togglePlay}
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
           playsInline
-        />
+          preload="auto"
+        >
+          <source src="/peak_video.mp4" type="video/mp4" />
+        </video>
 
         {/* Controls Overlay */}
         <div style={{ position: 'absolute', inset: 0, background: isPlaying ? 'transparent' : 'rgba(0,0,0,0.4)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }} onClick={togglePlay}>
